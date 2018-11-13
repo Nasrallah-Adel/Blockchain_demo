@@ -104,6 +104,7 @@ def get_chain():
 
 
    
+    
 @app.route('/is_chain_valid' , methods=['GET'])
 def is_chain_valid():
     is_valid=blockchain_obj.is_chain_valid(blockchain_obj.chain)
