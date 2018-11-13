@@ -100,6 +100,8 @@ class Blockchain:
 
 #create a web app flask
 app =Flask(__name__)        
+#create address for the node
+node_address= str(uuid4()).replace('-','')
 
     
 #create object of blockchain
@@ -113,13 +115,15 @@ def mining_block():
     previous_proof=previous_block['proof']
     proof=blockchain_obj.proof_of_work(previous_proof)
     previous_hash=blockchain_obj.hash(previous_block)
+    blockchain_obj.add_transaction(sender=node_address,reciver='nasrallah',amount=10)
     block=blockchain_obj.create_block(proof,previous_hash)
     response={'message':"congrat you just mind a block",
               'index':block['index']
               ,'timestamp':block['timestamp']
               ,'proof':block['proof']
               ,'previous_hash':block['previous_hash']
-              }
+              ,'transactions':block['transactions']}
+    
     return jsonify(response),200
     
     
