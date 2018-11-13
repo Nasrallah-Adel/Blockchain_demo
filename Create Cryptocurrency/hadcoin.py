@@ -88,7 +88,12 @@ class Blockchain:
                chain= response.json(['chain'])
                if length > max_length and self.is_chain_valid(chain):
                    max_length=length
-                   
+                   longest_chain = chain
+        if longest_chain:
+            self.chain = longest_chain
+
+            return True
+        return False
         
 #mining  our blockchain
         
