@@ -4,30 +4,34 @@
 import datetime
 import hashlib
 import json
-from flask import Flask, jsonify
+from flask import Flask, jsonify,request
+import requests
+from uuid import uuid4
+from urllib.parse import urlparse
 
 #build a blockchain
 class Blockchain:
+    
     def __init__(self):
         self.chain=[]
+        self.transactions=[]
         self.create_block(proof=1,previous_hash='0')
-        
+        self.nodes=set()
+            
         
     def create_block(self,proof,previous_hash):
         block={'index':len(self.chain)+1,
                'timestamp':str(datetime.datetime.now()),
                'proof':proof,
-               'previous_hash':previous_hash
-               }
-        
+               'previous_hash':previous_hash,
+               'transactions':self.transactions}
+        self.transactions=[]
         self.chain.append(block)
         return block
     
     
-    
     def get_previous_block(self):
         return self.chain[-1]
-    
     
     def proof_of_work(self,previous_proof):
         new_proof=1
@@ -40,10 +44,11 @@ class Blockchain:
                 new_proof+=1
         
         return new_proof
+    
+    
     def hash(self,block):
         encoded_block =  json.dumps(block,sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
- 
     
     def is_chain_valid(self,chain):
         previous_block=chain[0]
@@ -60,7 +65,22 @@ class Blockchain:
              previous_block = block
              block_index +=1
         return True
-                
+    
+       
+    def add_transaction(self, sender , reciver, amount):
+        self.transactions.append({'sender':sender,'reciver':reciver,'amount':amount})
+        previous_block=self.get_previous_block()
+        return previous_block['index']+1
+    
+    
+    def add_node(self,address_of_node):
+        parse_url = urlparse(address_of_node)
+        self.nodes.add(parse_url.netloc)
+        
+    def replace_chain(self):
+        network=self.nodes
+        longest_chain=none
+        
 #mining  our blockchain
         
 
@@ -68,13 +88,10 @@ class Blockchain:
 app =Flask(__name__)        
 
     
-
 #create object of blockchain
 blockchain_obj = Blockchain()
 
     # mining a new block
-
-
 
 @app.route('/mining_block' , methods=['GET'])
 def mining_block():
@@ -88,11 +105,9 @@ def mining_block():
               ,'timestamp':block['timestamp']
               ,'proof':block['proof']
               ,'previous_hash':block['previous_hash']
-              ,'hash':blockchain_obj.hash(block)}
+              }
     return jsonify(response),200
-
-
-
+    
     
 @app.route('/get_chain' , methods=['GET'])
 def get_chain():
@@ -100,9 +115,7 @@ def get_chain():
               'length':len(blockchain_obj.chain)}
     
     return jsonify(response),200
-
-
-
+    
    
 @app.route('/is_chain_valid' , methods=['GET'])
 def is_chain_valid():
@@ -112,7 +125,9 @@ def is_chain_valid():
     else:
         response={'message':'we have a problem , the blockchain not valid'}
     return jsonify(response),200
- 
+# decentrslizing our blockchain 
+  
+    
 #run the app
 app.run(host='127.0.0.1',port=5000 )
     
