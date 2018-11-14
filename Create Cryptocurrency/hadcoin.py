@@ -143,9 +143,21 @@ def is_chain_valid():
         response={'message':'all good the blockchain is valid'}
     else:
         response={'message':'we have a problem , the blockchain not valid'}
-    return jsonify(response),200
+    return jsonify(response),200 #ok
+
+@app.route('/add_transaction' , methods=['POST'])
+def add_transactions():
+    json = request.get_json()
+    transactions_keys=['sender','reciver','amount']
+    if not all (key in json for key in transactions_keys):
+        return 'some data missing',400 
+    index = blockchain_obj.add_transaction(json['sender'],json['reciver'],json['amount'])
+    response = {'message':f'your transaction will be added to block {index}'}
+    return jsonify(response),201 #created
+
 # decentrslizing our blockchain 
-  
+#connecting new nodes
+@app.route('/connect_node' , methods=['POST'])
     
 #run the app
 app.run(host='127.0.0.1',port=5000 )
