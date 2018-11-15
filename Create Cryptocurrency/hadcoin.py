@@ -158,6 +158,13 @@ def add_transactions():
 # decentrslizing our blockchain 
 #connecting new nodes
 @app.route('/connect_node' , methods=['POST'])
+def connect_node():
+    json=request.get_json()
+    nodes=json.get('nodes')
+    if nodes is None:
+        return "No node", 400
+    for node on nodes:
+        
     
 #run the app
 app.run(host='127.0.0.1',port=5000 )
