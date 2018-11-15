@@ -1,4 +1,4 @@
-# create blockchain
+# create czar currency 
 
 #lib
 import datetime
@@ -46,7 +46,7 @@ class Blockchain:
         
         return new_proof
     
-    lengt
+    
     def hash(self,block):
         encoded_block =  json.dumps(block,sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
@@ -68,8 +68,8 @@ class Blockchain:
         return True
     
        
-    def add_transaction(self, sender , reciver, amount):
-        self.transactions.append({'sender':sender,'reciver':reciver,'amount':amount})
+    def add_transaction(self, sender , receiver, amount):
+        self.transactions.append({'sender':sender,'receiver':receiver,'amount':amount})
         previous_block=self.get_previous_block()
         return previous_block['index']+1
     
@@ -85,8 +85,8 @@ class Blockchain:
         for nodes in network:
             response = requests.get(f'http://{nodes}/get_chain')
             if response.status_code == 200:
-               length= response.json(['length'])
-               chain= response.json(['chain'])
+               length= response.json()['length']
+               chain= response.json()['chain']
                if length > max_length and self.is_chain_valid(chain):
                    max_length=length
                    longest_chain = chain
@@ -116,7 +116,7 @@ def mining_block():
     previous_proof=previous_block['proof']
     proof=blockchain_obj.proof_of_work(previous_proof)
     previous_hash=blockchain_obj.hash(previous_block)
-    blockchain_obj.add_transaction(sender=node_address,reciver='nasrallah',amount=10)
+    blockchain_obj.add_transaction(sender=node_address,receiver='nasrallah',amount=10)
     block=blockchain_obj.create_block(proof,previous_hash)
     response={'message':"congrat you just mind a block",
               'index':block['index']
@@ -148,10 +148,10 @@ def is_chain_valid():
 @app.route('/add_transaction' , methods=['POST'])
 def add_transactions():
     json = request.get_json()
-    transactions_keys=['sender','reciver','amount']
+    transactions_keys=['sender','receiver','amount']
     if not all (key in json for key in transactions_keys):
         return 'some data missing',400 
-    index = blockchain_obj.add_transaction(json['sender'],json['reciver'],json['amount'])
+    index = blockchain_obj.add_transaction(json['sender'],json['receiver'],json['amount'])
     response = {'message':f'your transaction will be added to block {index}'}
     return jsonify(response),201 #created
 
