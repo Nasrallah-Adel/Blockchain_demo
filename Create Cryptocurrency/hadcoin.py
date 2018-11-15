@@ -163,9 +163,24 @@ def connect_node():
     nodes=json.get('nodes')
     if nodes is None:
         return "No node", 400
-    for node on nodes:
-        
+    for node in nodes:
+        blockchain_obj.add_node(node)
+    response={'message':'all the nodes are now connected','total_nodes':list(blockchain_obj.nodes)}
+    return jsonify(response),201
+#replace the chain by the longest chain if needed
+     
+@app.route('/replace_chain' , methods=['GET'])
+def replace_chain():
+    is_chain_replaced=blockchain_obj.replace_chain()
     
+    if is_chain_replaced:
+        response={'message':'all good the nodes had differant chaines so the chain was replaced by the longest one'
+                  ,'new chain':blockchain_obj.chain}
+    else:
+        response={'message':'all good , the chain is the largest one'
+                  ,'the chain':blockchain_obj.chain}
+    return jsonify(response),200 #ok
+
 #run the app
 app.run(host='127.0.0.1',port=5000 )
     
