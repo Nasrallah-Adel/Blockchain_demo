@@ -110,6 +110,7 @@ blockchain_obj = Blockchain()
 
     # mining a new block
 
+
 @app.route('/mining_block' , methods=['GET'])
 def mining_block():
     previous_block=blockchain_obj.get_previous_block()

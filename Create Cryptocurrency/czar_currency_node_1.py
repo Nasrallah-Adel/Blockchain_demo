@@ -156,6 +156,7 @@ def add_transactions():
 
 # decentrslizing our blockchain 
 #connecting new nodes
+    
 @app.route('/connect_node' , methods=['POST'])
 def connect_node():
     json=request.get_json()
